@@ -1,18 +1,27 @@
-#!/usr/bin/env python3
-
 import socket
+from threading import *
 
-HOST = '127.0.0.1'  # Standard loopback interface address (localhost)
-PORT = 80        # Port to listen on (non-privileged ports are > 1023)
+serversocket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+host = "127.0.0.1"
+port = 65432
+print (host)
+print (port)
+serversocket.bind((host, port))
 
-with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
-    s.bind((HOST, PORT))
-    s.listen()
-    conn, addr = s.accept()
-    with conn:
-        print('Connected by', addr)
-        while True:
-            data = conn.recv(1024)
-            if not data:
-                break
-            conn.sendall(data)
+class client(Thread):
+    def __init__(self, socket, address):
+        Thread.__init__(self)
+        self.sock = socket
+        self.addr = address
+        self.start()
+
+    def run(self):
+        while 1:
+            print(self.sock.recv(1024).decode())
+            self.sock.send(b'Recieved!')
+
+serversocket.listen(5)
+print ('Server started and Listening')
+while 1:
+    clientsocket, address = serversocket.accept()
+    client(clientsocket, address)
