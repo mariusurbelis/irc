@@ -2,8 +2,8 @@ import socket
 from threading import Thread
 
 serversocket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-host = "127.0.0.1"
-port = 3456
+host = ""
+port = 80
 serversocket.bind((host, port))
 
 class client(Thread):
