@@ -42,26 +42,29 @@ class client(Thread):
 
     def run(self):
             while 1:
-                message = self.sock.recv(2 ** 10).decode()
-                print(message)
-                messageParsed = message.splitlines()
-                # messageParsed = message.split(" ")
+                
+                while self.user == "":
+                    message = self.sock.recv(2 ** 10).decode()
+                    # print("The message is: " + message)
 
-                print("Line 1: " + messageParsed[0])
+                    for line in message.splitlines():
+                        # print(line)
+                        messageParsed = line.split(' ')
+                        if(messageParsed[0] == "NICK"):
+                            if(messageParsed[1] != ""):
+                                self.nick = messageParsed[1]
+                            else:
+                                self.sock.send(b'Invalid Paramater for NICK')
 
+                        if(messageParsed[0] == "USER"):
+                            if(messageParsed[1] != ""):
+                                self.user = messageParsed[1]
+                            else:
+                                self.sock.send(b'Invalid Paramater for USER')
 
-                if(messageParsed[0] == "NICK"):
-                    if(messageParsed[1] != ""):
-                        self.nick = messageParsed[1].splitlines()[0]
-                    else:
-                        self.sock.send(b'Invalid Paramater for NICK')
-
-
-                elif(messageParsed[0] == "USER"):
-                    if(messageParsed[1] != ""):
-                        self.user = messageParsed[1]
-                    else:
-                        self.sock.send(b'Invalid Paramater for USER')
+                        if(messageParsed[0] == "QUIT"):
+                            return
+                    print("User: " + self.user + " Nick: " + self.nick)
 
 
                 # elif(messageParsed[0] == "PRIVMSG"):
@@ -72,16 +75,16 @@ class client(Thread):
                 #                 self.sock.send(message)
 
 
-                if(self.nick != "" and self.user != ""):
-                    messageSend = 'Welcome to the IRC! ' + self.nick + ':' + self.user
+            if(self.nick != "" and self.user != ""):
+                messageSend = 'Welcome to the IRC! ' + self.nick + ':' + self.user
 
-                    self.sock.send(messageSend.encode())
-                    tm = time.strftime('%H:%M:%S')
-                    print(self.nick + ":" + self.user + " Has connected to the server at: " + tm)
-                else:
-                    self.sock.send(b"Receieved by server")
-                
-                print("User " + self.nick + " connected. " + self.user)
+                self.sock.send(messageSend.encode())
+                tm = time.strftime('%H:%M:%S')
+                print(self.nick + ":" + self.user + " Has connected to the server at: " + tm)
+            else:
+                self.sock.send(b"Receieved by server")
+            
+            print("User " + self.nick + " connected. " + self.user)
 
 serversocket.listen(5)
 print("Server started and Listening")
