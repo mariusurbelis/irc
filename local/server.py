@@ -15,6 +15,8 @@ class client(Thread):
         Thread.__init__(self)
         self.sock = socket
         self.addr = address
+        self.nick = ""
+        self.user = ""
         self.start()
         # Sending the welcome message for every new client
         # self.sock.send(str.encode("Welcome to the IRC\n1. Be nice\n2. Choose a username"))
@@ -38,9 +40,6 @@ class client(Thread):
     #     while True:
     #             print ("\n" + self.sock.recv(1024).decode())
 
-    nick = ""
-    user = ""
-
     def run(self):
             while 1:
                 message = self.sock.recv(1024).decode()
@@ -50,15 +49,14 @@ class client(Thread):
 
                 if(messageParsed[0] == "NICK"):
                     if(messageParsed[1] != ""):
-                        global nick
-                        nick = messageParsed[1]
+                        self.nick = messageParsed[1]
                     else:
                         self.sock.send(b'Invalid Paramater for NICK')
 
 
                 elif(messageParsed[0] == "USER"):
                     if(messageParsed[1] != ""):
-                        user = messageParsed[1]
+                        self.user = messageParsed[1]
                     else:
                         self.sock.send(b'Invalid Paramater for USER')
 
@@ -71,16 +69,16 @@ class client(Thread):
                 #                 self.sock.send(message)
 
 
-                if(nick != "" and user != ""):
-                    messageSend = 'Welcome to the IRC! ' + nick + ':' + user
+                if(self.nick != "" and self.user != ""):
+                    messageSend = 'Welcome to the IRC! ' + self.nick + ':' + self.user
 
                     self.sock.send(messageSend.encode())
                     tm = time.strftime('%H:%M:%S')
-                    print(nick + ":" + user + " Has connected to the server at: " + tm)
+                    print(self.nick + ":" + self.user + " Has connected to the server at: " + tm)
                 else:
                     self.sock.send(b"Receieved by server")
                 
-                print("User " + nick + " connected. " + user)
+                print("User " + self.nick + " connected. " + self.user)
 
 serversocket.listen(5)
 print("Server started and Listening")
