@@ -42,7 +42,7 @@ class client(Thread):
 
     def run(self):
             while 1:
-                message = self.sock.recv(1024).decode()
+                message = self.sock.recv(2 ** 10).decode()
                 print(message)
                 messageParsed = message.splitlines()
                 # messageParsed = message.split(" ")
