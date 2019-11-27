@@ -10,6 +10,7 @@ serversocket.bind((host, port))
 
 class client(Thread):
 
+
     def __init__(self, socket, address):
         Thread.__init__(self)
         self.sock = socket
@@ -37,9 +38,10 @@ class client(Thread):
     #     while True:
     #             print ("\n" + self.sock.recv(1024).decode())
 
+    nick = ""
+    user = ""
+
     def run(self):
-            nick = ""
-            user = ""
             while 1:
                 message = self.sock.recv(1024).decode()
                 print(message)
@@ -48,18 +50,15 @@ class client(Thread):
 
                 if(messageParsed[0] == "NICK"):
                     if(messageParsed[1] != ""):
-                        global nickname
-                        nickname = messageParsed[1]
-                        nick = nickname
+                        global nick
+                        nick = messageParsed[1]
                     else:
                         self.sock.send(b'Invalid Paramater for NICK')
 
 
                 elif(messageParsed[0] == "USER"):
                     if(messageParsed[1] != ""):
-                        global username
-                        username = messageParsed[1]
-                        user = username
+                        user = messageParsed[1]
                     else:
                         self.sock.send(b'Invalid Paramater for USER')
 
