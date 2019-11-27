@@ -1,4 +1,5 @@
 import socket
+import time
 from threading import Thread
 
 serversocket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
@@ -41,6 +42,7 @@ class client(Thread):
             user = ""
             while 1:
                 message = self.sock.recv(1024).decode()
+                print(message)
                 messageParsed = message.split(" ")
 
 
@@ -78,6 +80,8 @@ class client(Thread):
                     print(nick + ":" + user + " Has connected to the server at: " + tm)
                 else:
                     self.sock.send(b"Receieved by server")
+                
+                print("User " + nick + " connected. " + user)
 
 serversocket.listen(5)
 print("Server started and Listening")
