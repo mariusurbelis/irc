@@ -44,12 +44,15 @@ class client(Thread):
             while 1:
                 message = self.sock.recv(1024).decode()
                 print(message)
-                messageParsed = message.split(" ")
+                messageParsed = message.splitlines()
+                # messageParsed = message.split(" ")
+
+                print("Line 1: " + messageParsed[0])
 
 
                 if(messageParsed[0] == "NICK"):
                     if(messageParsed[1] != ""):
-                        self.nick = messageParsed[1]
+                        self.nick = messageParsed[1].splitlines()[0]
                     else:
                         self.sock.send(b'Invalid Paramater for NICK')
 
