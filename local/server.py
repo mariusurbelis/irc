@@ -32,9 +32,52 @@ class client(Thread):
     #                 return
     #             print("\n> " + username + " says " + data)
 
-    def run(self):
-        while True:
-                print ("\n" + self.sock.recv(1024).decode())
+    # def run(self):
+    #     while True:
+    #             print ("\n" + self.sock.recv(1024).decode())
+
+ def run(self):
+        nick = ""
+        user = ""
+        while 1:
+            message = self.sock.recv(1024).decode()
+            messageParsed = message.split(" ")
+
+
+            if(messageParsed[0] == "NICK"):
+                if(messageParsed[1] != ""):
+                    global nickname
+                    nickname = messageParsed[1]
+                    nick = nickname
+                else:
+                    self.sock.send(b'Invalid Paramater for NICK')
+
+
+            elif(messageParsed[0] == "USER"):
+                if(messageParsed[1] != ""):
+                    global username
+                    username = messageParsed[1]
+                    user = username
+                else:
+                    self.sock.send(b'Invalid Paramater for USER')
+
+
+            # elif(messageParsed[0] == "PRIVMSG"):
+            #     for users in clients:
+            #         if(messageParsed[1] == users):
+            #             if(messageParsed[2] != ""):
+            #                 message = messageParsed[2].encode
+            #                 self.sock.send(message)
+
+
+            if(nick != "" and user != ""):
+                messageSend = 'Welcome to the IRC! ' + nick + ':' + user
+
+                self.sock.send(messageSend.encode())
+                tm = time.strftime('%H:%M:%S')
+                print(nick + ":" + user + " Has connected to the server at: " + tm)
+            else:
+                self.sock.send(b"Receieved by server")
 
 serversocket.listen(5)
 print("Server started and Listening")
