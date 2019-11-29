@@ -4,7 +4,7 @@ from threading import Thread
 
 serversocket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 host = "10.0.42.17"
-port = 65459
+port = 65432
 serversocket.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
 serversocket.bind((host, port))
 socket_list = []
@@ -21,27 +21,6 @@ class client(Thread):
         self.user = ""
         self.channel = ""
         self.start()
-        # Sending the welcome message for every new client
-        # self.sock.send(str.encode("Welcome to the IRC\n1. Be nice\n2. Choose a username"))
-
-    # def run(self):
-    #     username = ""
-    #     initial = 0
-    #     while True:
-    #         if initial == 0:
-    #             username = self.sock.recv(1024).decode()
-    #             print ("\n<> " + username + " connected <>")
-    #             initial = 1
-    #         else:
-    #             data = self.sock.recv(1024).decode()
-    #             if not data:
-    #                 print ("\nX " + username + " disconnected X")
-    #                 return
-    #             print("\n> " + username + " says " + data)
-
-    # def run(self):
-    #     while True:
-    #             print ("\n" + self.sock.recv(1024).decode())
 
     def run(self):
             while self.nick == "" and self.user == "":
@@ -77,26 +56,40 @@ class client(Thread):
                 global client_list
                 client_list.append(self.user)
                 print("Added to user list.")
+
                 for users in client_list:
                     print(users)
 
-            print("TEST")
+                message1 = ':10.0.42.17 001 ' + self.user + ' :Welcome to the IRC server!\n'
+                message2 = ':10.0.42.17 002 ' + self.user + ' :Your host is ' + 'labpc213\n'
+                message3 = ':10.0.42.17 003 ' + self.user + ' :This server was created ...\n'
+
+                message = message1 + message2 + message3 
+                messageEncoded = message.encode()
+                self.sock.send(messageEncoded)
+                
+
+
+
+                
 
             while True:
-                print("TESTING")
                 message = self.sock.recv(1024).decode()
-                print("Test1")
-                messageParsed = message.split(' ')
-                print(message)
-                if(messageParsed[0] == "JOIN"):
-                    print("Test2")
-                    for channel in channel_list:
-                        print("Test3")
-                        print(messageParsed[1])
-                        print(channel)
-                        if(messageParsed[1] == channel):
-                            self.channel = channel
-                            print("Test4")
+                for line in message.splitlines():
+                    messageParsed = line.split(' ')
+                    print(line)
+                    if(messageParsed[0] == "JOIN"):
+                        for channel in channel_list:
+                            print(messageParsed[1])
+                            print(channel)
+                            if(messageParsed[1] == channel):
+                                self.channel = channel
+                                message1 = ':10.0.42.17 331 ' + self.user + self.channel + ' :No topic is set\n'
+                                message2 = ':10.0.42.17 353 ' + self.user + ' = ' +  self.channel + ' : ' + self.user + '\n'
+                                message3 = ':10.0.42.17 366 ' + self.user + self.channel + ' :End of NAMES list\n'
+                                message = message1 + message2 + message3 
+                                messageEncoded = message.encode()
+                                self.sock.send(messageEncoded)
 
 
 
