@@ -3,7 +3,7 @@ import time
 from threading import Thread
 
 serversocket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-host = "irc.urbelis.dev"
+host = ""
 port = 65432
 serversocket.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
 serversocket.bind((host, port))
