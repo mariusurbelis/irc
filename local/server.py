@@ -54,7 +54,7 @@ class client(Thread):
                 global socket_list
                 socket_list.append(self.sock)
                 global client_list
-                client_list.append(self.user)
+                client_list.append(self)
                 print("Added to user list.")
 
                 for users in client_list:
@@ -67,16 +67,12 @@ class client(Thread):
                 message = message1 + message2 + message3 
                 messageEncoded = message.encode()
                 self.sock.send(messageEncoded)
-                
-
-
-
-                
-
+  
             while True:
                 message = self.sock.recv(1024).decode()
                 for line in message.splitlines():
                     messageParsed = line.split(' ')
+
                     if(messageParsed[0] == "JOIN"):
                         for channel in channel_list:
                             print(messageParsed[1])
@@ -84,14 +80,26 @@ class client(Thread):
                             if(messageParsed[1] == channel):
                                 self.channel = channel
                                 message1 = ':10.0.42.17 331 ' + self.user + ' ' + self.channel + ' :No topic is set\n'
-                                message2 = ':10.0.42.17 353 ' + self.user + ' = ' +  self.channel + ' :' + self.user + '\n'
+                                message2 = ':10.0.42.17 353 ' + self.user + ' = ' +  self.channel + ' :' + self.user 
+                                for client in client_list:
+                                    if(client.channel == self.channel):
+                                        message2 = message2 + ' ' + client.user
+                                message2 = message2 + '\n'
                                 message3 = ':10.0.42.17 366 ' + self.user + ' ' + self.channel + ' :End of NAMES list\n'
-                                #message4 = self.user + ' ' + line
                                 message4 = ':' + self.user + ' ' + line + '\n'
                                 print(message4)
                                 message = message4 + message1 + message2 + message3 
-                                messageEncoded = message.encode()
-                                self.sock.send(messageEncoded)
+
+                                for client in client_list:
+                                    if(client.channel == self.channel):
+                                        client.sock.send(message.encode())
+
+                    if(messageParsed[0] == "PRIVMSG"):
+                        for client in client_list:
+                            if(client.channel == self.channel):
+                                if (client != self):
+                                    message = ':' + self.nick + '!' + self.user + '@somecunt ' + line + '\n'
+                                    client.sock.send(message.encode())
 
                 
                 #     messageSend = 'Welcome to the IRC! ' + self.nick + ':' + self.user
