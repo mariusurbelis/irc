@@ -77,22 +77,21 @@ class client(Thread):
                 message = self.sock.recv(1024).decode()
                 for line in message.splitlines():
                     messageParsed = line.split(' ')
-                    print(line)
                     if(messageParsed[0] == "JOIN"):
                         for channel in channel_list:
                             print(messageParsed[1])
                             print(channel)
                             if(messageParsed[1] == channel):
                                 self.channel = channel
-                                message1 = ':10.0.42.17 331 ' + self.user + self.channel + ' :No topic is set\n'
-                                message2 = ':10.0.42.17 353 ' + self.user + ' = ' +  self.channel + ' : ' + self.user + '\n'
-                                message3 = ':10.0.42.17 366 ' + self.user + self.channel + ' :End of NAMES list\n'
-                                message = message1 + message2 + message3 
+                                message1 = ':10.0.42.17 331 ' + self.user + ' ' + self.channel + ' :No topic is set\n'
+                                message2 = ':10.0.42.17 353 ' + self.user + ' = ' +  self.channel + ' :' + self.user + '\n'
+                                message3 = ':10.0.42.17 366 ' + self.user + ' ' + self.channel + ' :End of NAMES list\n'
+                                #message4 = self.user + ' ' + line
+                                message4 = ':' + self.user + ' ' + line + '\n'
+                                print(message4)
+                                message = message4 + message1 + message2 + message3 
                                 messageEncoded = message.encode()
                                 self.sock.send(messageEncoded)
-
-
-
 
                 
                 #     messageSend = 'Welcome to the IRC! ' + self.nick + ':' + self.user
