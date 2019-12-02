@@ -2,8 +2,6 @@ import socket
 from threading import Thread
 
 serversocket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-# host = ""
-# port = 3456
 host = "10.0.42.17"
 port = 65432
 serversocket.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
