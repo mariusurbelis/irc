@@ -3,24 +3,17 @@
 import socket
 
 s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-host = "80.229.14.201"
+host = "irc.urbelis.dev"
 port = 3456
 s.connect((host, port))
 
-# Print server's welcome message
-print("\n-------------------")
-print(s.recv(1024).decode())
-print("-------------------\n")
+s.sendall("CAP LS 302\n".encode())
+s.sendall("NICK ProBot\n".encode())
+s.sendall("USER ProBot\n".encode())
 
-username = input('Choose your username: ')
-s.sendall(bytes(username, 'utf-8'))
-
-def ts(r):
-    message2 = bytes(r, 'utf-8')
-    s.sendall(message2)
+s.sendall("JOIN #test\n".encode())
 
 while True:
-    r = input('> ')
-    ts(r)
+    i = 1
 
 s.close()
