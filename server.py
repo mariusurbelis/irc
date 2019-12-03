@@ -15,7 +15,7 @@ def ping():
     print("Pinging")
     for client in client_list:
         print("Found a user " + client.user)
-        ping = 'PING ' + client.user
+        ping = 'PING ' + client.user + '\n'
         client.sock.send(ping.encode())
 
 class client(Thread):
@@ -116,6 +116,54 @@ class client(Thread):
                                         client.sock.send(message.encode())
                             self.channel.remove(channel)
 
+                    if(messageParsed[0] == "JOIN"):
+                        found = False
+                        for channel in channel_list:
+                            if(messageParsed[1] == channel):
+                                found = True
+
+                        channel = messageParsed[1]
+                        if(not found):
+                            channel_list.append(channel)
+                            found = True
+
+                        if (found):
+                            self.channel.append(channel)
+                            REPLY_331 = ':10.0.42.17 331 ' + self.user + ' ' + channel + ' :No topic is set\n'
+                            REPLY_353 = ':10.0.42.17 353 ' + self.user + ' = ' + channel + ' :'
+
+                            for client in client_list:
+                                for clientChannel in client.channel:
+                                    if(clientChannel == channel):
+                                        REPLY_353 = REPLY_353 + ' ' + client.user
+                            REPLY_353 = REPLY_353 + '\n'
+
+                            REPLY_366 = ':10.0.42.17 366 ' + self.user + ' ' + channel + ' :End of NAMES list\n'
+                            REPLY = ':' + self.user + ' ' + line + '\n'
+                            message = REPLY + REPLY_331 + REPLY_353 + REPLY_366
+
+                            for client in client_list:
+                                # print(client.user)
+                                for clientChannel in client.channel:
+                                    # print(clientChannel)
+                                    if(clientChannel == channel):
+                                        client.sock.send(message.encode())
+
+
+
+                    #Leave channel protocol
+                    if(messageParsed[0] == "PART"):
+                        for channel in self.channel:
+                            print(channel)
+                        if(self.channel):
+                            channel = messageParsed[1]
+                            message = ':' + self.user + ' ' + line + '\n'
+                            for client in client_list:
+                                for clientChannel in client.channel:
+                                    if(clientChannel == channel):
+                                        client.sock.send(message.encode())
+                            self.channel.remove(channel)
+
                     #Leave server protocol
                     if(messageParsed[0] == "QUIT"):
                         for client in client_list:
@@ -123,7 +171,6 @@ class client(Thread):
                             client.sock.send(message.encode())
                         client_list.remove(self)
                         self.sock.close()
-                        return
 
                     #Message protocol
                     if(messageParsed[0] == "PRIVMSG"):
