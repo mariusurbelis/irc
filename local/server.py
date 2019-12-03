@@ -3,7 +3,7 @@ from threading import Thread
 
 serversocket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 host = "10.0.42.17"
-port = 65432
+port = 3456
 serversocket.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
 serversocket.bind((host, port))
 client_list = []
@@ -104,10 +104,10 @@ class client(Thread):
 
                     #Leave server protocol
                     if(messageParsed[0] == "QUIT"):
-                        if(self.channel != ""):
-                            print(message)
-                            # client_list.remove(self)
-                            self.channel = ""
+                        for client in client_list:
+                            message = ':' + self.user + ' ' + line + '\n'
+                            client.sock.send(message.encode())
+                        client_list.remove(self)
 
                     #Message protocol
                     if(messageParsed[0] == "PRIVMSG"):

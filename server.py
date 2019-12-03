@@ -104,10 +104,10 @@ class client(Thread):
 
                     #Leave server protocol
                     if(messageParsed[0] == "QUIT"):
-                        #if(self.channel != ""):
-                        print(self.user + " has quit")
+                        for client in client_list:
+                            message = ':' + self.user + ' ' + line + '\n'
+                            client.sock.send(message.encode())
                         client_list.remove(self)
-                        self.channel = ""
 
                     #Message protocol
                     if(messageParsed[0] == "PRIVMSG"):
