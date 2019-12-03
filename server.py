@@ -68,9 +68,9 @@ class client(Thread):
                 # for users in client_list:
                     # print(users)
 
-                REPLY_001 = ':irc.urbelis.dev 001 ' + self.user + ' :Welcome to the IRC server!\n'
-                REPLY_002 = ':irc.urbelis.dev 002 ' + self.user + ' :Your host is ' + 'Nox\n'
-                # REPLY_003 = ':irc.urbelis.dev 003 ' + self.user + ' :This server was created ..\n'
+                REPLY_001 = ':irc.urbelis.dev 001 ' + self.nick + ' :Welcome to the IRC server!\n'
+                REPLY_002 = ':irc.urbelis.dev 002 ' + self.nick + ' :Your host is ' + 'Nox\n'
+                # REPLY_003 = ':irc.urbelis.dev 003 ' + self.nick + ' :This server was created ..\n'
                 # message = REPLY_001 + REPLY_002 + REPLY_003 + "Join general by typing /join #general\n"
                 
                 message = REPLY_001 + REPLY_002 + "Join general by typing /join #general\n"
@@ -96,8 +96,8 @@ class client(Thread):
 
                         if (found):
                             self.channel.append(channel)
-                            REPLY_331 = ':10.0.42.17 331 ' + self.user + ' ' + channel + ' :No topic is set\n'
-                            REPLY_353 = ':10.0.42.17 353 ' + self.user + ' = ' + channel + ' :'
+                            REPLY_331 = ':irc.urbelis.dev331 ' + self.nick + ' ' + channel + ' :No topic is set\n'
+                            REPLY_353 = ':irc.urbelis.dev 353 ' + self.nick + ' = ' + channel + ' :'
 
                             for client in client_list:
                                 for clientChannel in client.channel:
@@ -105,8 +105,8 @@ class client(Thread):
                                         REPLY_353 = REPLY_353 + ' ' + client.nick
                             REPLY_353 = REPLY_353 + '\n'
 
-                            REPLY_366 = ':10.0.42.17 366 ' + self.user + ' ' + channel + ' :End of NAMES list\n'
-                            REPLY = ':' + self.user + "!" + self.nick + '@' + platform.node() + ' ' + line + '\n'
+                            REPLY_366 = ':irc.urbelis.dev 366 ' + self.nick + ' ' + channel + ' :End of NAMES list\n'
+                            REPLY = ':' + self.nick + "!" + self.user + '@' + platform.node() + ' ' + line + '\n'
                             message = REPLY + REPLY_331 + REPLY_353 + REPLY_366
                             print(message)
 
@@ -123,7 +123,7 @@ class client(Thread):
                             print(channel)
                         if(self.channel):
                             channel = messageParsed[1]
-                            message = ':' + self.user + "!" + self.nick + '@' + platform.node() + ' ' + line + '\n'
+                            message = ':' + self.nick + "!" + self.user + '@' + platform.node() + ' ' + line + '\n'
                             for client in client_list:
                                 for clientChannel in client.channel:
                                     if(clientChannel == channel):
@@ -133,7 +133,7 @@ class client(Thread):
                     #Leave server protocol
                     if(messageParsed[0] == "QUIT"):
                         for client in client_list:
-                            message = ':' + self.user + "!" + self.nick + '@' + platform.node() + ' ' + line + '\n'
+                            message = ':' + self.nick + "!" + self.user + '@' + platform.node() + ' ' + line + '\n'
                             client.sock.send(message.encode())
                         client_list.remove(self)
                         self.sock.close()
