@@ -33,21 +33,21 @@ class IRC:
         print("Most likely authenticated...")
  
     def get_response(self):
-        time.sleep(1)
+        time.sleep(5)
         # Get the response
         resp = self.irc.recv(2 ** 10).decode()
 
-        print("Got some response")
+        print("Got some response " + resp)
  
         if resp.find('PING') != -1:
             print("Received PING")                      
-            self.irc.send(('PONG ' + resp.split().decode() [1] + '\r\n').encode()) 
+            self.irc.send(('PONG ' + resp.split() [1] + '\r\n').encode()) 
  
         return resp
 
 
 ## IRC Config
-server = "irc.urbelis.dev"
+server = "10.0.42.17"
 port = 3456
 channel = "#test"
 botnick = "PROBot"
@@ -56,7 +56,6 @@ irc = IRC()
 irc.connect(server, port, channel, botnick, botuser)
 
 while True:
-    print("Bot " + botnick + " is running on " + server)
     text = irc.get_response()
     print(text)
 

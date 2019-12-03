@@ -1,5 +1,6 @@
 import socket
 from threading import Thread
+import threading
 
 serversocket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 host = "10.0.42.17"
@@ -8,6 +9,15 @@ serversocket.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
 serversocket.bind((host, port))
 client_list = []
 channel_list = ["#test", "#test2"]
+
+def ping():
+    print("Pinging")
+    for client in client_list:
+        print("Found a user " + client.user)
+        ping = 'PING ' + client.user
+        client.sock.send(ping.encode())
+
+threading.Timer(2.5, ping).start()
 
 class client(Thread):
 
@@ -29,7 +39,7 @@ class client(Thread):
                     message = self.sock.recv(2 ** 10).decode()
 
                     for line in message.splitlines():
-                        print(line)
+                        # print(line)
                         messageParsed = line.split(' ')
                         if(messageParsed[0] == "NICK"):
                             if(messageParsed[1] != ""):
@@ -55,8 +65,8 @@ class client(Thread):
                 print("Adding " + self.user + " to client list")
                 client_list.append(self)
 
-                for users in client_list:
-                    print(users)
+                # for users in client_list:
+                    # print(users)
 
                 REPLY_001 = ':10.0.42.17 001 ' + self.user + ' :Welcome to the IRC server!\n'
                 REPLY_002 = ':10.0.42.17 002 ' + self.user + ' :Your host is ' + 'labpc213\n'
@@ -66,6 +76,7 @@ class client(Thread):
                 self.sock.send(message.encode())
   
             while True:
+
                 message = self.sock.recv(1024).decode()
                 for line in message.splitlines():
                     messageParsed = line.split(' ')
@@ -74,7 +85,6 @@ class client(Thread):
                     if(messageParsed[0] == "JOIN"):
                         for channel in channel_list:
                             if(messageParsed[1] == channel):
-                                print("Sucess")
                                 self.channel.append(channel)
                                 REPLY_331 = ':10.0.42.17 331 ' + self.user + ' ' + channel + ' :No topic is set\n'
                                 REPLY_353 = ':10.0.42.17 353 ' + self.user + ' = ' + channel + ' :'
@@ -90,9 +100,9 @@ class client(Thread):
                                 message = REPLY + REPLY_331 + REPLY_353 + REPLY_366
 
                                 for client in client_list:
-                                    print(client.user)
+                                    # print(client.user)
                                     for clientChannel in client.channel:
-                                        print(clientChannel)
+                                        # print(clientChannel)
                                         if(clientChannel == channel):
                                             client.sock.send(message.encode())
 
@@ -113,6 +123,7 @@ class client(Thread):
                             message = ':' + self.user + ' ' + line + '\n'
                             client.sock.send(message.encode())
                         client_list.remove(self)
+                        self.sock.close()
 
                     #Message protocol
                     if(messageParsed[0] == "PRIVMSG"):
@@ -143,4 +154,3 @@ print("Server started and Listening")
 while True:
     clientsocket, address = serversocket.accept()
     client(clientsocket, address)
-

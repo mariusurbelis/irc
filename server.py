@@ -66,6 +66,7 @@ class client(Thread):
                 self.sock.send(message.encode())
   
             while True:
+
                 message = self.sock.recv(1024).decode()
                 for line in message.splitlines():
                     messageParsed = line.split(' ')
@@ -74,7 +75,7 @@ class client(Thread):
                     if(messageParsed[0] == "JOIN"):
                         for channel in channel_list:
                             if(messageParsed[1] == channel):
-                                print("Sucess")
+                                print("Success")
                                 self.channel.append(channel)
                                 REPLY_331 = ':10.0.42.17 331 ' + self.user + ' ' + channel + ' :No topic is set\n'
                                 REPLY_353 = ':10.0.42.17 353 ' + self.user + ' = ' + channel + ' :'
@@ -143,4 +144,10 @@ print("Server started and Listening")
 while True:
     clientsocket, address = serversocket.accept()
     client(clientsocket, address)
+    threading.Timer(5.0, ping).start()
+        
 
+def ping():
+    for clients in client_list:
+        ping = 'PING ' + client.user
+        client.sock.send(ping.encode())
