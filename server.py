@@ -102,6 +102,13 @@ class client(Thread):
                                         client.sock.send(message.encode())
                             self.channel = ""
 
+                    #Leave server protocol
+                    if(messageParsed[0] == "QUIT"):
+                        #if(self.channel != ""):
+                        print(self.user + " has quit")
+                        client_list.remove(self)
+                        self.channel = ""
+
                     #Message protocol
                     if(messageParsed[0] == "PRIVMSG"):
                         for client in client_list:
@@ -129,3 +136,4 @@ print("Server started and Listening")
 while True:
     clientsocket, address = serversocket.accept()
     client(clientsocket, address)
+
