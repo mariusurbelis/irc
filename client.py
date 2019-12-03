@@ -21,6 +21,7 @@ class IRC:
         self.irc.connect((server, port))
 
         # Perform user authentication
+        self.irc.sendall(("CAP LS 302\n").encode())
         self.irc.sendall(("USER " + botuser + "\n").encode())
         self.irc.sendall(("NICK " + botnick + "\n").encode())
         
@@ -32,7 +33,6 @@ class IRC:
         print("Most likely authenticated...")
  
     def get_response(self):
-        time.sleep(5)
         # Get the response
         resp = self.irc.recv(2 ** 10).decode()
 
@@ -46,7 +46,7 @@ class IRC:
 
 
 ## IRC Config
-server = "10.0.42.17"
+server = "irc.urbelis.dev"
 port = 3456
 channel = "#test"
 botnick = "PROBot"
@@ -64,3 +64,9 @@ while True:
     #gives current the time
     if "PRIVMSG" in text and channel in text and "!time" in text:
         irc.send(channel, datetime.datetime.today().strftime('%X'))
+
+    if "PRIVMSG" in text and channel not in text:
+        parse = text.split(' ')
+        user = parse[0]
+        print(user)
+        irc.send(user.replace(':', ''), "for fox sake")
