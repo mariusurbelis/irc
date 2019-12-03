@@ -4,7 +4,7 @@ import threading
 import time
 
 serversocket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-host = ""
+host = "10.0.42.17"
 port = 3456
 serversocket.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
 serversocket.bind((host, port))
@@ -67,9 +67,9 @@ class client(Thread):
                 # for users in client_list:
                     # print(users)
 
-                REPLY_001 = ':irc.urbelis.dev 001 ' + self.user + ' :Welcome to the IRC server!\n'
-                REPLY_002 = ':irc.urbelis.dev 002 ' + self.user + ' :Your host is ' + 'Nox\n'
-                REPLY_003 = ':irc.urbelis.dev 003 ' + self.user + ' :This server was created ..\n'
+                REPLY_001 = ':10.0.42.17 001 ' + self.user + ' :Welcome to the IRC server!\n'
+                REPLY_002 = ':10.0.42.17 002 ' + self.user + ' :Your host is ' + 'labpc213\n'
+                REPLY_003 = ':10.0.42.17 003 ' + self.user + ' :This server was created ..\n'
 
                 message = REPLY_001 + REPLY_002 + REPLY_003 
                 self.sock.send(message.encode())
@@ -85,8 +85,8 @@ class client(Thread):
                         for channel in channel_list:
                             if(messageParsed[1] == channel):
                                 self.channel.append(channel)
-                                REPLY_331 = ':irc.urbelis.dev 331 ' + self.user + ' ' + channel + ' :No topic is set\n'
-                                REPLY_353 = ':irc.urbelis.dev 353 ' + self.user + ' = ' + channel + ' :'
+                                REPLY_331 = ':10.0.42.17 331 ' + self.user + ' ' + channel + ' :No topic is set\n'
+                                REPLY_353 = ':10.0.42.17 353 ' + self.user + ' = ' + channel + ' :'
 
                                 for client in client_list:
                                     for clientChannel in client.channel:
@@ -94,7 +94,7 @@ class client(Thread):
                                             REPLY_353 = REPLY_353 + ' ' + client.user
                                 REPLY_353 = REPLY_353 + '\n'
 
-                                REPLY_366 = ':irc.urbelis.dev 366 ' + self.user + ' ' + channel + ' :End of NAMES list\n'
+                                REPLY_366 = ':10.0.42.17 366 ' + self.user + ' ' + channel + ' :End of NAMES list\n'
                                 REPLY = ':' + self.user + ' ' + line + '\n'
                                 message = REPLY + REPLY_331 + REPLY_353 + REPLY_366
 
