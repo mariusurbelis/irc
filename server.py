@@ -7,7 +7,7 @@ port = 3456
 serversocket.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
 serversocket.bind((host, port))
 client_list = []
-channel_list = ["#test"]
+channel_list = ["#test", "#test2"]
 
 class client(Thread):
 
@@ -17,7 +17,7 @@ class client(Thread):
         self.addr = address
         self.nick = ""
         self.user = ""
-        self.channel = ""
+        self.channel = []
         self.start()
 
     def run(self):
@@ -73,34 +73,39 @@ class client(Thread):
                     #Join channel protocol
                     if(messageParsed[0] == "JOIN"):
                         for channel in channel_list:
-                            print(messageParsed[1])
                             if(messageParsed[1] == channel):
-                                self.channel = channel
-                                REPLY_331 = ':10.0.42.17 331 ' + self.user + ' ' + self.channel + ' :No topic is set\n'
-                                REPLY_353 = ':10.0.42.17 353 ' + self.user + ' = ' +  self.channel + ' :'
+                                print("Sucess")
+                                self.channel.append(channel)
+                                REPLY_331 = ':10.0.42.17 331 ' + self.user + ' ' + channel + ' :No topic is set\n'
+                                REPLY_353 = ':10.0.42.17 353 ' + self.user + ' = ' + channel + ' :'
 
                                 for client in client_list:
-                                    if(client.channel == self.channel):
-                                        REPLY_353 = REPLY_353 + ' ' + client.user
+                                    for clientChannel in client.channel:
+                                        if(clientChannel == channel):
+                                            REPLY_353 = REPLY_353 + ' ' + client.user
                                 REPLY_353 = REPLY_353 + '\n'
 
-                                REPLY_366 = ':10.0.42.17 366 ' + self.user + ' ' + self.channel + ' :End of NAMES list\n'
+                                REPLY_366 = ':10.0.42.17 366 ' + self.user + ' ' + channel + ' :End of NAMES list\n'
                                 REPLY = ':' + self.user + ' ' + line + '\n'
                                 message = REPLY + REPLY_331 + REPLY_353 + REPLY_366
 
                                 for client in client_list:
-                                    if(client.channel == self.channel):
-                                        client.sock.send(message.encode())
+                                    print(client.user)
+                                    for clientChannel in client.channel:
+                                        print(clientChannel)
+                                        if(clientChannel == channel):
+                                            client.sock.send(message.encode())
 
                     #Leave channel protocol
                     if(messageParsed[0] == "PART"):
-                        if(self.channel != ""):
+                        if(self.channel):
+                            channel = messageParsed[1]
                             message = ':' + self.user + ' ' + line + '\n'
-                            print(message)
                             for client in client_list:
-                                    if(client.channel == self.channel):
+                                for clientChannel in client.channel:
+                                    if(clientChannel == channel):
                                         client.sock.send(message.encode())
-                            self.channel = ""
+                            self.channel.remove(channel)
 
                     #Leave server protocol
                     if(messageParsed[0] == "QUIT"):
@@ -111,16 +116,18 @@ class client(Thread):
 
                     #Message protocol
                     if(messageParsed[0] == "PRIVMSG"):
+                        channel = messageParsed[1]
                         for client in client_list:
-
+                            
                             #Message Channel
-                            if(client.channel == self.channel):
-                                if (client != self):
-                                    message = ':' + self.nick + '!' + self.user + '@somecunt ' + line + '\n'
-                                    client.sock.send(message.encode())
+                            for clientChannel in client.channel:
+                                if(clientChannel == channel):
+                                    if (client != self):
+                                        message = ':' + self.nick + '!' + self.user + '@somecunt ' + line + '\n'
+                                        client.sock.send(message.encode())
 
                             #Message User
-                            elif(messageParsed[1] == client.user):
+                            if(messageParsed[1] == client.user):
                                 if(messageParsed[2] != ":"):
                                     message = ':' + self.nick + '!' + self.user + '@somecunt ' + line + '\n'
                                     client.sock.send(message.encode())
