@@ -96,7 +96,7 @@ class client(Thread):
 
                         if (found):
                             self.channel.append(channel)
-                            REPLY_331 = ':irc.urbelis.dev331 ' + self.nick + ' ' + channel + ' :No topic is set\n'
+                            REPLY_331 = ':irc.urbelis.dev 331 ' + self.nick + ' ' + channel + ' :No topic is set\n'
                             REPLY_353 = ':irc.urbelis.dev 353 ' + self.nick + ' = ' + channel + ' :'
 
                             for client in client_list:
