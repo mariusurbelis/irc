@@ -46,7 +46,7 @@ class client(Thread):
                                 global client_list
                                 for client in client_list:
                                     if messageParsed[1] == client.nick:
-                                        message = self.user + ' ' + messageParsed[1] + ':Nickname is already in use\n'
+                                        message = self.nick + ' ' + messageParsed[1] + ':Nickname is already in use\n'
                                         self.sock.send(message.encode())
                                         return
                                 self.nick = messageParsed[1]
@@ -170,4 +170,4 @@ print("Server started and Listening")
 while True:
     clientsocket, address = serversocket.accept()
     client(clientsocket, address)
-    ping()
+    # ping()
