@@ -105,11 +105,8 @@ class client(Thread):
                     #Leave server protocol
                     if(messageParsed[0] == "QUIT"):
                         if(self.channel != ""):
-                            message = ':' + self.user + ' ' + line + '\n'
                             print(message)
-                            for client in client_list:
-                                    if(client.channel == self.channel):
-                                        client.sock.send(message.encode())
+                            # client_list.remove(self)
                             self.channel = ""
 
                     #Message protocol
