@@ -68,7 +68,7 @@ class client(Thread):
                     # print(users)
 
                 REPLY_001 = ':irc.urbelis.dev 001 ' + self.user + ' :Welcome to the IRC server!\n'
-                REPLY_002 = ':irc.urbelis.dev 002 ' + self.user + ' :Your host is ' + 'labpc213\n'
+                REPLY_002 = ':irc.urbelis.dev 002 ' + self.user + ' :Your host is ' + 'Nox\n'
                 REPLY_003 = ':irc.urbelis.dev 003 ' + self.user + ' :This server was created ..\n'
 
                 message = REPLY_001 + REPLY_002 + REPLY_003 
