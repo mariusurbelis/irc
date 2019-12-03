@@ -20,13 +20,13 @@ class IRC:
         self.irc.connect((server, port))
 
         # Perform user authentication
-        self.irc.send(bytes("USER " + botnick + " " + botnick +" " + botnick + " :python\n", "UTF-8"))
-        self.irc.send(bytes("NICK " + botnick + "\n", "UTF-8"))
+        self.irc.sendall(("USER " + botnick + " " + botnick +" " + botnick + " :python\n").encode())
+        self.irc.sendall(("NICK " + botnick + "\n").encode())
         
         time.sleep(1)
 
         # join the channel
-        self.irc.send(bytes("JOIN " + channel + "\n", "UTF-8"))
+        self.irc.sendall(("JOIN " + channel + "\n").encode())
 
         print("Most likely authenticated...")
  
@@ -47,14 +47,15 @@ class IRC:
 ## IRC Config
 server = "irc.urbelis.dev"
 port = 3456
-channel = "#test"
+channel = "#test2"
 botnick = "PROBot"
 irc = IRC()
 irc.connect(server, port, channel, botnick)
 
 while True:
+    print("Bot " + botnick + " is running on " + server)
     text = irc.get_response()
     print(text)
-    
+     
     if "PRIVMSG" in text and channel in text and "hello" in text:
         irc.send(channel, "Fuck!")
