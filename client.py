@@ -66,7 +66,7 @@ while True:
         irc.send(channel, datetime.datetime.today().strftime('%X'))
 
     if "PRIVMSG" in text and channel not in text:
-        parse = text.split(' ')
+        parse = text.split(' ')[1]
         user = parse.split("!")[0]
         print(user)
         irc.send(user.replace(':', ''), "for fox sake")
