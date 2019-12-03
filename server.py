@@ -2,6 +2,7 @@ import socket
 from threading import Thread
 import threading
 import time
+import platform
 
 serversocket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 host = "10.0.42.17"
@@ -99,12 +100,13 @@ class client(Thread):
                             for client in client_list:
                                 for clientChannel in client.channel:
                                     if(clientChannel == channel):
-                                        REPLY_353 = REPLY_353 + ' ' + client.user
+                                        REPLY_353 = REPLY_353 + ' ' + client.nick
                             REPLY_353 = REPLY_353 + '\n'
 
                             REPLY_366 = ':10.0.42.17 366 ' + self.user + ' ' + channel + ' :End of NAMES list\n'
-                            REPLY = ':' + self.user + ' ' + line + '\n'
+                            REPLY = ':' + self.user + "!" + self.nick + '@' + platform.node() + ' ' + line + '\n'
                             message = REPLY + REPLY_331 + REPLY_353 + REPLY_366
+                            print(message)
 
                             for client in client_list:
                                 # print(client.user)
@@ -113,14 +115,13 @@ class client(Thread):
                                     if(clientChannel == channel):
                                         client.sock.send(message.encode())
 
-
                     #Leave channel protocol
                     if(messageParsed[0] == "PART"):
                         for channel in self.channel:
                             print(channel)
                         if(self.channel):
                             channel = messageParsed[1]
-                            message = ':' + self.user + ' ' + line + '\n'
+                            message = ':' + self.user + "!" + self.nick + '@' + platform.node() + ' ' + line + '\n'
                             for client in client_list:
                                 for clientChannel in client.channel:
                                     if(clientChannel == channel):
@@ -130,7 +131,7 @@ class client(Thread):
                     #Leave server protocol
                     if(messageParsed[0] == "QUIT"):
                         for client in client_list:
-                            message = ':' + self.user + ' ' + line + '\n'
+                            message = ':' + self.user + "!" + self.nick + '@' + platform.node() + ' ' + line + '\n'
                             client.sock.send(message.encode())
                         client_list.remove(self)
                         self.sock.close()
@@ -144,14 +145,16 @@ class client(Thread):
                             for clientChannel in client.channel:
                                 if(clientChannel == channel):
                                     if (client != self):
-                                        message = ':' + self.nick + '!' + self.user + '@somecunt ' + line + '\n'
+                                        message = ':' + self.nick + "!" + self.user + '@' + platform.node() + ' ' + line + '\n'
                                         client.sock.send(message.encode())
 
+
                             #Message User
-                            if(messageParsed[1] == client.user):
+                            if(messageParsed[1] == client.nick):
                                 if(messageParsed[2] != ":"):
-                                    message = ':' + self.nick + '!' + self.user + '@somecunt ' + line + '\n'
+                                    message = ':' + self.nick + "!" + self.user + '@' + platform.node() + ' ' + line + '\n'
                                     client.sock.send(message.encode())
+
                 #ping()
 
         except socket.error:
