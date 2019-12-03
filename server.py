@@ -125,6 +125,7 @@ class client(Thread):
                             client.sock.send(message.encode())
                         client_list.remove(self)
                         self.sock.close()
+                        return
 
                     #Message protocol
                     if(messageParsed[0] == "PRIVMSG"):
@@ -149,6 +150,7 @@ class client(Thread):
             #If socket error, remove client from list then close socket connection
             client_list.remove(self)
             self.sock.close()
+            return
 
 #Listen for client connections to server
 serversocket.listen(5)

@@ -2,7 +2,6 @@ import socket
 import sys
 import time
 import datetime
-from datetime import datetime
 
 class IRC:
  
@@ -59,10 +58,8 @@ while True:
     text = irc.get_response()
     print(text)
 
-    today = datetime.today()
-     
     if "PRIVMSG" in text and channel in text and "!day" in text:
-        irc.send(channel, datetime.today().strftime('%A'))
+        irc.send(channel, datetime.datetime.today().strftime('%A'))
 
     if "PRIVMSG" in text and channel in text and "!time" in text:
-        irc.send(channel, datetime.today().strftime('%X'))
+        irc.send(channel, datetime.datetime.today().strftime('%X'))
