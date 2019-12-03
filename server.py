@@ -80,42 +80,6 @@ class client(Thread):
                 for line in message.splitlines():
                     messageParsed = line.split(' ')
 
-                    #Join channel protocol
-                    if(messageParsed[0] == "JOIN"):
-                        for channel in channel_list:
-                            if(messageParsed[1] == channel):
-                                self.channel.append(channel)
-                                REPLY_331 = ':' + host + ' 331 ' + self.user + ' ' + channel + ' :No topic is set\n'
-                                REPLY_353 = ':' + host + ' 353 ' + self.user + ' = ' + channel + ' :'
-
-                                for client in client_list:
-                                    for clientChannel in client.channel:
-                                        if(clientChannel == channel):
-                                            REPLY_353 = REPLY_353 + ' ' + client.user
-                                REPLY_353 = REPLY_353 + '\n'
-
-                                REPLY_366 = ':' + host + ' 366 ' + self.user + ' ' + channel + ' :End of NAMES list\n'
-                                REPLY = ':' + self.user + ' ' + line + '\n'
-                                message = REPLY + REPLY_331 + REPLY_353 + REPLY_366
-
-                                for client in client_list:
-                                    # print(client.user)
-                                    for clientChannel in client.channel:
-                                        # print(clientChannel)
-                                        if(clientChannel == channel):
-                                            client.sock.send(message.encode())
-
-                    #Leave channel protocol
-                    if(messageParsed[0] == "PART"):
-                        if(self.channel):
-                            channel = messageParsed[1]
-                            message = ':' + self.user + ' ' + line + '\n'
-                            for client in client_list:
-                                for clientChannel in client.channel:
-                                    if(clientChannel == channel):
-                                        client.sock.send(message.encode())
-                            self.channel.remove(channel)
-
                     if(messageParsed[0] == "JOIN"):
                         found = False
                         for channel in channel_list:
@@ -148,7 +112,6 @@ class client(Thread):
                                     # print(clientChannel)
                                     if(clientChannel == channel):
                                         client.sock.send(message.encode())
-
 
 
                     #Leave channel protocol
@@ -189,7 +152,7 @@ class client(Thread):
                                 if(messageParsed[2] != ":"):
                                     message = ':' + self.nick + '!' + self.user + '@somecunt ' + line + '\n'
                                     client.sock.send(message.encode())
-                ping()
+                #ping()
 
         except socket.error:
             #If socket error, remove client from list then close socket connection
