@@ -69,9 +69,11 @@ class client(Thread):
 
                 REPLY_001 = ':irc.urbelis.dev 001 ' + self.user + ' :Welcome to the IRC server!\n'
                 REPLY_002 = ':irc.urbelis.dev 002 ' + self.user + ' :Your host is ' + 'Nox\n'
-                REPLY_003 = ':irc.urbelis.dev 003 ' + self.user + ' :This server was created ..\n'
-
-                message = REPLY_001 + REPLY_002 + REPLY_003 + "Join general by typing /join #general\n"
+                # REPLY_003 = ':irc.urbelis.dev 003 ' + self.user + ' :This server was created ..\n'
+                # message = REPLY_001 + REPLY_002 + REPLY_003 + "Join general by typing /join #general\n"
+                
+                message = REPLY_001 + REPLY_002 + "Join general by typing /join #general\n"
+                
                 self.sock.send(message.encode())
   
             while True:
