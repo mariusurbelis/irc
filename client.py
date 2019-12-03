@@ -58,5 +58,5 @@ while True:
     text = irc.get_response()
     print(text)
      
-    if "PRIVMSG" in text and channel in text and "hello" in text:
+    if "PRIVMSG" in text and channel in text and "!day" in text:
         irc.send(channel, "Fuck!")
