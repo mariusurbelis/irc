@@ -58,8 +58,9 @@ while True:
     text = irc.get_response()
     print(text)
 
+    #gives the current day of the week
     if "PRIVMSG" in text and channel in text and "!day" in text:
         irc.send(channel, datetime.datetime.today().strftime('%A'))
-
+    #gives current the time
     if "PRIVMSG" in text and channel in text and "!time" in text:
         irc.send(channel, datetime.datetime.today().strftime('%X'))
