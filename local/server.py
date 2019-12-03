@@ -1,6 +1,7 @@
 import socket
 from threading import Thread
 import threading
+import time
 
 serversocket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 host = "10.0.42.17"
@@ -8,7 +9,7 @@ port = 3456
 serversocket.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
 serversocket.bind((host, port))
 client_list = []
-channel_list = ["#test", "#test2"]
+channel_list = ["#test", "#test2", "#general"]
 
 def ping():
     print("Pinging")
@@ -16,8 +17,6 @@ def ping():
         print("Found a user " + client.user)
         ping = 'PING ' + client.user
         client.sock.send(ping.encode())
-
-threading.Timer(2.5, ping).start()
 
 class client(Thread):
 
@@ -142,6 +141,8 @@ class client(Thread):
                                 if(messageParsed[2] != ":"):
                                     message = ':' + self.nick + '!' + self.user + '@somecunt ' + line + '\n'
                                     client.sock.send(message.encode())
+                ping()
+
         except socket.error:
             #If socket error, remove client from list then close socket connection
             client_list.remove(self)
@@ -154,3 +155,4 @@ print("Server started and Listening")
 while True:
     clientsocket, address = serversocket.accept()
     client(clientsocket, address)
+    ping()
