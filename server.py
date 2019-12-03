@@ -68,13 +68,11 @@ class client(Thread):
                 # for users in client_list:
                     # print(users)
 
-                REPLY_001 = ':irc.urbelis.dev 001 ' + self.nick + ' :Welcome to the IRC server!\n'
-                REPLY_002 = ':irc.urbelis.dev 002 ' + self.nick + ' :Your host is ' + 'Nox\n'
-                # REPLY_003 = ':irc.urbelis.dev 003 ' + self.nick + ' :This server was created ..\n'
-                # message = REPLY_001 + REPLY_002 + REPLY_003 + "Join general by typing /join #general\n"
-                
-                message = REPLY_001 + REPLY_002 + "Join general by typing /join #general\n"
-                
+                REPLY_001 = ':' + host + ' 001 ' + self.nick + ' :Welcome to the IRC server!\n'
+                REPLY_002 = ':' + host + ' 002 ' + self.nick + ' :Your host is ' + 'Nox\n'
+                REPLY_003 = ':' + host + ' 003 ' + self.nick + ' :This server was created ..\n'
+                message = REPLY_001 + REPLY_002 + REPLY_003 + "Join general by typing /join #general\n"
+                                
                 self.sock.send(message.encode())
   
             while True:
@@ -96,8 +94,8 @@ class client(Thread):
 
                         if (found):
                             self.channel.append(channel)
-                            REPLY_331 = ':irc.urbelis.dev331 ' + self.nick + ' ' + channel + ' :No topic is set\n'
-                            REPLY_353 = ':irc.urbelis.dev 353 ' + self.nick + ' = ' + channel + ' :'
+                            REPLY_331 = ':' + host + ' 331 ' + self.nick + ' ' + channel + ' :No topic is set\n'
+                            REPLY_353 = ':' + host + ' 353 ' + self.nick + ' = ' + channel + ' :'
 
                             for client in client_list:
                                 for clientChannel in client.channel:
@@ -105,7 +103,7 @@ class client(Thread):
                                         REPLY_353 = REPLY_353 + ' ' + client.nick
                             REPLY_353 = REPLY_353 + '\n'
 
-                            REPLY_366 = ':irc.urbelis.dev 366 ' + self.nick + ' ' + channel + ' :End of NAMES list\n'
+                            REPLY_366 = ':' + host + ' 366 ' + self.nick + ' ' + channel + ' :End of NAMES list\n'
                             REPLY = ':' + self.nick + "!" + self.user + '@' + platform.node() + ' ' + line + '\n'
                             message = REPLY + REPLY_331 + REPLY_353 + REPLY_366
                             print(message)
