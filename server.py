@@ -71,7 +71,7 @@ class client(Thread):
                 REPLY_002 = ':irc.urbelis.dev 002 ' + self.user + ' :Your host is ' + 'Nox\n'
                 REPLY_003 = ':irc.urbelis.dev 003 ' + self.user + ' :This server was created ..\n'
 
-                message = REPLY_001 + REPLY_002 + REPLY_003 
+                message = REPLY_001 + REPLY_002 + REPLY_003 + "Join general by typing /join #general\n"
                 self.sock.send(message.encode())
   
             while True:
