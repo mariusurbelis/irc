@@ -8,7 +8,7 @@ serversocket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 host = "irc.urbelis.dev"
 port = 3456
 serversocket.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
-serversocket.bind((host, port))
+serversocket.bind(("", port))
 client_list = []
 channel_list = ["#test", "#general"]
 
