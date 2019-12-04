@@ -5,6 +5,7 @@ import time
 import platform
 
 serversocket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+#host = "10.0.42.17"
 host = ""
 port = 3456
 serversocket.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
