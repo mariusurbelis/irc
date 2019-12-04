@@ -82,22 +82,26 @@ class client(Thread):
                 for line in message.splitlines():
                     messageParsed = line.split(' ')
 
+                    #Join channel protocol
                     if(messageParsed[0] == "JOIN"):
                         found = False
                         for channel in channel_list:
                             if(messageParsed[1] == channel):
                                 found = True
-
                         channel = messageParsed[1]
+
+                        #If channel not found, create channel with name
                         if(not found):
                             channel_list.append(channel)
                             found = True
 
+                        #If channel found, send reply codes and broadcast to everyone in channel
                         if (found):
                             self.channel.append(channel)
                             REPLY_331 = ':' + host + ' 331 ' + self.nick + ' ' + channel + ' :No topic is set\n'
                             REPLY_353 = ':' + host + ' 353 ' + self.nick + ' = ' + channel + ' :'
 
+                            #Add every client in channel to list of users
                             for client in client_list:
                                 for clientChannel in client.channel:
                                     if(clientChannel == channel):
@@ -109,31 +113,32 @@ class client(Thread):
                             message = REPLY + REPLY_331 + REPLY_353 + REPLY_366
                             print(message)
 
+                            #If client in channel, send message
                             for client in client_list:
-                                # print(client.user)
                                 for clientChannel in client.channel:
-                                    # print(clientChannel)
                                     if(clientChannel == channel):
                                         client.sock.send(message.encode())
 
                     #Leave channel protocol
                     if(messageParsed[0] == "PART"):
-                        for channel in self.channel:
-                            print(channel)
                         if(self.channel):
                             channel = messageParsed[1]
                             message = ':' + self.nick + "!" + self.user + '@' + platform.node() + ' ' + line + '\n'
+                            #For each client in channel, send message that user left
                             for client in client_list:
                                 for clientChannel in client.channel:
                                     if(clientChannel == channel):
                                         client.sock.send(message.encode())
+                            #Remove channel frm users channel list
                             self.channel.remove(channel)
 
                     #Leave server protocol
                     if(messageParsed[0] == "QUIT"):
+                        #For each client, send message that user has quit
                         for client in client_list:
                             message = ':' + self.nick + "!" + self.user + '@' + platform.node() + ' ' + line + '\n'
                             client.sock.send(message.encode())
+                        #Remove user from list of clients and then close the socket
                         client_list.remove(self)
                         self.sock.close()
 
