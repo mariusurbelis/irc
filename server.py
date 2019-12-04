@@ -4,15 +4,19 @@ import threading
 import time
 import platform
 
+# Creating the socket
 serversocket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 #host = "10.0.42.17"
 host = ""
 port = 3456
 serversocket.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
 serversocket.bind((host, port))
+# Prepare the initial client list
 client_list = []
+# Prepare the initial channel list
 channel_list = ["#test", "#general"]
 
+# Ping function sends a ping to users
 def ping():
     print("Pinging")
     for client in client_list:
@@ -20,8 +24,9 @@ def ping():
         ping = 'PING ' + client.user + '\n'
         client.sock.send(ping.encode())
 
+# The client class
 class client(Thread):
-
+    # Constructor for the client class
     def __init__(self, socket, address):
         Thread.__init__(self)
         self.sock = socket
@@ -37,15 +42,18 @@ class client(Thread):
             while self.nick == "" and self.user == "":
                 
                 while self.user == "":
+                    # Read received data
                     message = self.sock.recv(2 ** 10).decode()
 
                     for line in message.splitlines():
                         # print(line)
                         messageParsed = line.split(' ')
+                        # Check if the client is sending a nickname parameter
                         if(messageParsed[0] == "NICK"):
                             if(messageParsed[1] != ""):
                                 global client_list
                                 for client in client_list:
+                                    # If a nickname already exists, inform the user
                                     if messageParsed[1] == client.nick:
                                         message = self.nick + ' ' + messageParsed[1] + ':Nickname is already in use\n'
                                         self.sock.send(message.encode())
@@ -54,21 +62,19 @@ class client(Thread):
                             else:
                                 self.sock.send(b'Invalid Paramater for NICK')
 
+                        # Check if the client is sending a username parameter
                         if(messageParsed[0] == "USER"):
                             if(messageParsed[1] != ""):
                                 self.user = messageParsed[1]
                             else:
                                 self.sock.send(b'Invalid Paramater for USER')
 
-
             print("User: " + self.user + " Nick: " + self.nick)
             if(self.nick != "" and self.user != ""):
                 print("Adding " + self.user + " to client list")
                 client_list.append(self)
 
-                # for users in client_list:
-                    # print(users)
-
+                # Constructing and sending the initial welcome messages
                 REPLY_001 = ':' + host + ' 001 ' + self.nick + ' :Welcome to the IRC server!\n'
                 REPLY_002 = ':' + host + ' 002 ' + self.nick + ' :Your host is ' + 'Nox\n'
                 REPLY_003 = ':' + host + ' 003 ' + self.nick + ' :This server was created ..\n'
