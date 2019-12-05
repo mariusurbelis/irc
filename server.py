@@ -68,6 +68,7 @@ class client(Thread):
                                     if messageParsed[1] == client.nick:
                                         message = self.nick + ' ' + messageParsed[1] + ':Nickname is already in use\n'
                                         self.sock.send(message.encode())
+                                        self.sock.close()
                                         return
                                 self.nick = messageParsed[1]
                             else:
