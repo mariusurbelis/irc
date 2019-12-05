@@ -17,9 +17,7 @@ class IRC:
  
     def send(self, channel, msg):
         # Transfer data
-        print(msg)
         toSend = "PRIVMSG " + channel + " :" + msg + "\r\n"
-        print(toSend)
         self.irc.send(toSend.encode())
  
     def connect(self, server, port, channel, botnick, botuser):
@@ -62,15 +60,16 @@ botuser = "PROBotUsername"
 irc = IRC()
 irc.connect(server, port, channel, botnick, botuser)
 
+
+#Code to read in trump_tweets.csv and append to the tweets list
+#Code taken from realypython.com/python-csv/
 with open('trump_tweets.csv', encoding='utf-8', errors='ignore') as csv_file:
     csv_reader = csv.reader(csv_file, delimiter=',')
     line_count = 0
     for row in csv_reader:
         if line_count == 0:
-            print(f'Column names are {", ".join(row)}')
             line_count += 1
         else:
-            print(f'\t{row[1]}')
             tweets.append(row[1])
             line_count 
     print(f'Processed {line_count} lines.')
@@ -85,12 +84,10 @@ while True:
     #gives current the time
     if "PRIVMSG" in text and channel in text and "!time" in text:
         irc.send(channel, datetime.datetime.today().strftime('%X'))
-
+    #If messages not in the specified channel, message user with a trump tweet
     if "PRIVMSG" in text and channel not in text:
         parse = text.split(' ')[0]
         user = parse.split("!")[0]
-        print(user)
         value = randint(1, 1928)
-        print(tweets[value])
         irc.send(user.replace(':', ''), tweets[value])
 
