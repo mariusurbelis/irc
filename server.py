@@ -6,8 +6,8 @@ import platform
 
 # Creating the socket
 serversocket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-#host = "10.0.42.17"
-host = ""
+host = "10.0.42.17"
+# host = ""
 port = 3456
 serversocket.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
 serversocket.bind((host, port))
@@ -16,13 +16,26 @@ client_list = []
 # Prepare the initial channel list
 channel_list = ["#test", "#general"]
 
+
+# ----- NOT IMPLIMENTED -----
 # Ping function sends a ping to users
-def ping():
-    print("Pinging")
-    for client in client_list:
-        print("Found a user " + client.user)
-        ping = 'PING ' + client.user + '\n'
-        client.sock.send(ping.encode())
+# def ping():
+#     print("Pinging")
+#     for client in client_list:
+#         print("Found a user " + client.user)
+#         ping = 'PING ' + client.user + '\n'
+#         client.sock.send(ping.encode())
+#         resp = client.sock.recv(2 ** 10).decode()
+#         if("PONG" not in resp):
+#             #For each client, send message that user has quit
+#             for client2 in client_list:
+#                 message = ':' + client.nick + "!" + client.user + '@' + platform.node() + ' QUIT ' + client.nick + '\n'
+#                 client2.sock.send(message.encode())
+#             #Remove user from list of clients and then close the socket
+#             client_list.remove(client)
+#             client.sock.close()
+
+
 
 # The client class
 class client(Thread):
@@ -164,10 +177,9 @@ class client(Thread):
                             #Message User
                             if(messageParsed[1] == client.nick):
                                 if(messageParsed[2] != ":"):
-                                    message = ':' + self.nick + "!" + self.user + '@' + platform.node() + ' ' + line + '\n'
-                                    client.sock.send(message.encode())
-
-                #ping()
+                                    if(messageParsed[1] != self.nick):
+                                        message = ':' + self.nick + "!" + self.user + '@' + platform.node() + ' ' + line + '\n'
+                                        client.sock.send(message.encode())
 
         except socket.error:
             #If socket error, remove client from list then close socket connection
@@ -182,4 +194,8 @@ print("Server started and Listening")
 while True:
     clientsocket, address = serversocket.accept()
     client(clientsocket, address)
-    # ping()
+    
+    # ----- NOT IMPLIMENTED -----
+    # t = threading.Timer(5.0, lambda: ping())
+    # t.daemon = True
+    # t.start()

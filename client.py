@@ -49,8 +49,8 @@ class IRC:
 
 
 ## IRC Config
-server = "irc.urbelis.dev"
-#server = "10.0.42.17"
+#server = "irc.urbelis.dev"
+server = "10.0.42.17"
 port = 3456
 channel = "#test"
 botnick = "PROBot"
