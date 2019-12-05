@@ -3,6 +3,7 @@ import sys
 import time
 import datetime
 import csv
+import platform
 from random import randint
 tweets = []
 
@@ -16,7 +17,10 @@ class IRC:
  
     def send(self, channel, msg):
         # Transfer data
-        self.irc.send(("PRIVMSG " + channel + " " + msg + "\n").encode())
+        print(msg)
+        toSend = "PRIVMSG " + channel + " :" + msg + "\r\n"
+        print(toSend)
+        self.irc.send(toSend.encode())
  
     def connect(self, server, port, channel, botnick, botuser):
         # Connect to the server
@@ -24,9 +28,9 @@ class IRC:
         self.irc.connect((server, port))
 
         # Perform user authentication
-        self.irc.sendall(("CAP LS 302\n").encode())
-        self.irc.sendall(("USER " + botuser + "\n").encode())
-        self.irc.sendall(("NICK " + botnick + "\n").encode())
+        self.irc.sendall(("CAP LS 302\r\n").encode())
+        self.irc.sendall(("USER " + botuser + " " + botuser + " 10.0.42.17 :realname\r\n").encode())
+        self.irc.sendall(("NICK " + botnick + "\r\n").encode())
         
         time.sleep(1)
 
@@ -43,14 +47,14 @@ class IRC:
  
         if resp.find('PING') != -1:
             print("Received PING")                      
-            self.irc.send(('PONG ' + resp.split() [1] + '\r\n').encode()) 
+            self.irc.send(('PONG ' + platform.node() + ' ' + server + '\r\n').encode()) 
  
         return resp
 
 
 ## IRC Config
-#server = "irc.urbelis.dev"
-server = "10.0.42.17"
+server = "irc.urbelis.dev"
+#server = "10.0.42.17"
 port = 3456
 channel = "#test"
 botnick = "PROBot"
@@ -58,7 +62,7 @@ botuser = "PROBotUsername"
 irc = IRC()
 irc.connect(server, port, channel, botnick, botuser)
 
-with open('trump_tweets.csv') as csv_file:
+with open('trump_tweets.csv', encoding='utf-8', errors='ignore') as csv_file:
     csv_reader = csv.reader(csv_file, delimiter=',')
     line_count = 0
     for row in csv_reader:
@@ -68,8 +72,7 @@ with open('trump_tweets.csv') as csv_file:
         else:
             print(f'\t{row[1]}')
             tweets.append(row[1])
-            line_count += 1
-
+            line_count 
     print(f'Processed {line_count} lines.')
 
 while True:
@@ -88,5 +91,6 @@ while True:
         user = parse.split("!")[0]
         print(user)
         value = randint(1, 1928)
+        print(tweets[value])
         irc.send(user.replace(':', ''), tweets[value])
 
