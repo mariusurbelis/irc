@@ -3,6 +3,7 @@ import sys
 import time
 import datetime
 import csv
+import platform
 from random import randint
 tweets = []
 
@@ -16,7 +17,8 @@ class IRC:
  
     def send(self, channel, msg):
         # Transfer data
-        self.irc.send(("PRIVMSG " + channel + " " + msg + "\n").encode())
+        toSend = "PRIVMSG " + channel + " :" + msg + "\r\n"
+        self.irc.send(toSend.encode())
  
     def connect(self, server, port, channel, botnick, botuser):
         # Connect to the server
@@ -24,9 +26,9 @@ class IRC:
         self.irc.connect((server, port))
 
         # Perform user authentication
-        self.irc.sendall(("CAP LS 302\n").encode())
-        self.irc.sendall(("USER " + botuser + "\n").encode())
-        self.irc.sendall(("NICK " + botnick + "\n").encode())
+        self.irc.sendall(("CAP LS 302\r\n").encode())
+        self.irc.sendall(("USER " + botuser + " " + botuser + " 10.0.42.17 :realname\r\n").encode())
+        self.irc.sendall(("NICK " + botnick + "\r\n").encode())
         
         time.sleep(1)
 
@@ -43,7 +45,7 @@ class IRC:
  
         if resp.find('PING') != -1:
             print("Received PING")                      
-            self.irc.send(('PONG ' + resp.split() [1] + '\r\n').encode()) 
+            self.irc.send(('PONG ' + platform.node() + ' ' + server + '\r\n').encode()) 
  
         return resp
 
@@ -58,18 +60,18 @@ botuser = "PROBotUsername"
 irc = IRC()
 irc.connect(server, port, channel, botnick, botuser)
 
-with open('trump_tweets.csv') as csv_file:
+
+#Code to read in trump_tweets.csv and append to the tweets list
+#Code taken from realypython.com/python-csv/
+with open('trump_tweets.csv', encoding='utf-8', errors='ignore') as csv_file:
     csv_reader = csv.reader(csv_file, delimiter=',')
     line_count = 0
     for row in csv_reader:
         if line_count == 0:
-            print(f'Column names are {", ".join(row)}')
             line_count += 1
         else:
-            print(f'\t{row[1]}')
             tweets.append(row[1])
-            line_count += 1
-
+            line_count 
     print(f'Processed {line_count} lines.')
 
 while True:
@@ -82,11 +84,10 @@ while True:
     #gives current the time
     if "PRIVMSG" in text and channel in text and "!time" in text:
         irc.send(channel, datetime.datetime.today().strftime('%X'))
-
+    #If messages not in the specified channel, message user with a trump tweet
     if "PRIVMSG" in text and channel not in text:
         parse = text.split(' ')[0]
         user = parse.split("!")[0]
-        print(user)
         value = randint(1, 1928)
         irc.send(user.replace(':', ''), tweets[value])
 
